@@ -9,9 +9,9 @@ Une démo et de la documentation pour bien démarrer avec les bases de données 
     - [Démarrer](#démarrer)
     - [Persister une base de données](#persister-une-base-de-données)
     - [Gestion des bases de données](#gestion-des-bases-de-données)
-  - [Changer le format de sortie, les *modes* d'affichage de SQLite](#changer-le-format-de-sortie-les-modes-daffichage-de-sqlite)
-  - [Rediriger la sortie et écrire le résultat d'une requête dans un fichier](#rediriger-la-sortie-et-écrire-le-résultat-dune-requête-dans-un-fichier)
-  - [Rediriger l'entrée ou charger des scripts SQL en *batch mode*](#rediriger-lentrée-ou-charger-des-scripts-sql-en-batch-mode)
+    - [Changer le format de sortie, les *modes* d'affichage de SQLite](#changer-le-format-de-sortie-les-modes-daffichage-de-sqlite)
+    - [Rediriger la sortie et écrire le résultat d'une requête dans un fichier](#rediriger-la-sortie-et-écrire-le-résultat-dune-requête-dans-un-fichier)
+    - [Rediriger l'entrée ou charger des scripts SQL en *batch mode*](#rediriger-lentrée-ou-charger-des-scripts-sql-en-batch-mode)
   - [Travailler avec une base de données SQLite dans un projet PHP](#travailler-avec-une-base-de-données-sqlite-dans-un-projet-php)
   - [Références](#références)
     - [SQLite](#sqlite)
@@ -139,7 +139,7 @@ sqlite> INSERT INTO Foo(id) VALUES(1), (2), (3);
 
 La commande `.databases` montre toutes les bases de données ouvertes dans la connexion. La commande `.schema` affiche le schéma complet de la base de données (i.e l'ensemble des instructions SQL la définissant). La commande `.schema`, comme la commande `.tables`, affiche le schéma de toutes les bases de données attachées. On peut détacher une base avec [DETACH](https://www.sqlite.org/lang_detach.html).
 
-## Changer le format de sortie, les *modes* d'affichage de SQLite
+### Changer le format de sortie, les *modes* d'affichage de SQLite
 
 sqlite3 peut montrer les résultats d'une requête dans 14 formats différents par défaut : ascii, box, csv, column, **list** (par défaut), markdown, quote, json, html, etc.
 
@@ -178,7 +178,7 @@ sqlite> SELECT * FROM Foo;
 
 > Il existe beaucoup d'options possibles. En savoir plus avec la commande `.help .mode`.
 
-## Rediriger la sortie et écrire le résultat d'une requête dans un fichier
+### Rediriger la sortie et écrire le résultat d'une requête dans un fichier
 
 Par défaut, sqlite3 retourne les résultats d'une requête sur la sortie standard. On peut rediriger la sortie facilement avec la commande `.output` et `.once`. 
 
@@ -207,7 +207,7 @@ sqlite> SELECT * FROM Foo;
 3
 ~~~
 
-## Rediriger l'entrée ou charger des scripts SQL en *batch mode*
+### Rediriger l'entrée ou charger des scripts SQL en *batch mode*
 
 Par défaut, sqlite3 lit les requêtes SQL depuis l'entrée standard. On peut également charger un fichier contenant des requêtes SQL (*batch mode*) avec la commande `.read`
 
