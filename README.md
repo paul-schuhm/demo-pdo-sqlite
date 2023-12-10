@@ -1,19 +1,21 @@
-# Démo pdo_sqlite, travailler avec une base de données SQLite avec PHP
+# Démo `pdo_sqlite`, travailler avec une base de données SQLite avec PHP
 
 Une démo et de la documentation pour bien démarrer avec les bases de données SQLite et PHP.
 
-- [Démo pdo\_sqlite, travailler avec une base de données SQLite avec PHP](#démo-pdo_sqlite-travailler-avec-une-base-de-données-sqlite-avec-php)
-  - [Installation](#installation)
+- [Démo `pdo_sqlite`, travailler avec une base de données SQLite avec PHP](#démo-pdo_sqlite-travailler-avec-une-base-de-données-sqlite-avec-php)
+  - [Installations](#installations)
+  - [SQLite, quelques bases](#sqlite-quelques-bases)
   - [Le client sqlite3](#le-client-sqlite3)
   - [Démarrer](#démarrer)
   - [Persister une base de données](#persister-une-base-de-données)
   - [Gestion des bases de données](#gestion-des-bases-de-données)
+  - [Travailler avec une base de données SQLite dans un projet PHP](#travailler-avec-une-base-de-données-sqlite-dans-un-projet-php)
   - [Références](#références)
     - [SQLite](#sqlite)
     - [PHP et SQLite](#php-et-sqlite)
 
 
-## Installation
+## Installations
 
 - [Installer SQLite](https://www.sqlite.org/download.html)
 - [Installer l'extension `PDO`](https://www.php.net/manual/fr/pdo.installation.php)
@@ -27,9 +29,11 @@ PDO
 pdo_sqlite
 ~~~
 
+## SQLite, quelques bases
+
 ## Le client sqlite3
 
-sqlite3 est une interface en ligne de commande pour manipuler les bases de données SQLite version 3. Une base de données SQLite est un simple fichier sur le disque ou peut être hébergée directement en mémoire.
+sqlite3 est une interface en ligne de commande pour manipuler les bases de données relationnelle SQLite version 3. Une base de données SQLite est un simple fichier sur le disque ou peut être hébergée directement en mémoire.
 
 ~~~bash
 #Le manuel de sqlite3
@@ -134,6 +138,20 @@ DETACH mydb;
 La commande `.databases` montre toutes les bases de données ouvertes dans la connexion. La commande `.schema` affiche le schéma complet de la base de données (i.e l'ensemble des instructions SQL la définissant). La commande `.schema`, comme la commande `.tables`, affiche le schéma de toutes les bases de données attachées. On peut détacher une base avec [DETACH](https://www.sqlite.org/lang_detach.html).
 
 
+## Travailler avec une base de données SQLite dans un projet PHP
+
+SQLite, comme tous les autres SGBDR, peut être manipulée par un programme PHP via [l'interface PDO (PHP Data Objects)](https://www.php.net/manual/fr/intro.pdo.php). L'implémentation de PDO pour SQLite (le *driver*) est le module php `pdo_sqlite`, installé par défaut. Une fois une connexion ouverte, le code PHP pour dialoguer avec SQLite est donc le même qu'avec n'importe quel autre SGBDR.
+
+~~~php
+//Ouvrir la base de données stockée dans le fichier db.sql3 dans le repertoire courant
+$dsn = 'sqlite:db.sql3';
+$pdo = new PDO($dsn);
+//Un prepared statement PDO
+$ps = $pdo->prepare('CREATE Table Foo(id INT PRIMARY KEY);', array());
+//Execution de la requête
+$result = $ps->execute();
+~~~
+
 ## Références
 
 ### SQLite
@@ -145,4 +163,4 @@ La commande `.databases` montre toutes les bases de données ouvertes dans la co
 ### PHP et SQLite
 
 - [Fonctions SQLite (PDO_SQLITE)](https://www.php.net/manual/fr/ref.pdo-sqlite.php)
-- [PHP PDO](https://www.php.net/manual/fr/book.pdo.php)# demo-pdo-sqlite
+- [PHP PDO](https://www.php.net/manual/fr/book.pdo.php)
