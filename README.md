@@ -11,7 +11,7 @@ Une démo et de la documentation pour bien démarrer avec les bases de données 
     - [Gestion des bases de données](#gestion-des-bases-de-données)
   - [Changer le format de sortie, les *modes* d'affichage de SQLite](#changer-le-format-de-sortie-les-modes-daffichage-de-sqlite)
   - [Rediriger la sortie et écrire le résultat d'une requête dans un fichier](#rediriger-la-sortie-et-écrire-le-résultat-dune-requête-dans-un-fichier)
-  - [Lire du SQL depuis un fichier](#lire-du-sql-depuis-un-fichier)
+  - [Rediriger l'entrée ou charger des scripts SQL en *batch mode*](#rediriger-lentrée-ou-charger-des-scripts-sql-en-batch-mode)
   - [Travailler avec une base de données SQLite dans un projet PHP](#travailler-avec-une-base-de-données-sqlite-dans-un-projet-php)
   - [Références](#références)
     - [SQLite](#sqlite)
@@ -207,7 +207,7 @@ sqlite> SELECT * FROM Foo;
 3
 ~~~
 
-## Lire du SQL depuis un fichier
+## Rediriger l'entrée ou charger des scripts SQL en *batch mode*
 
 Par défaut, sqlite3 lit les requêtes SQL depuis l'entrée standard. On peut également charger un fichier contenant des requêtes SQL (*batch mode*) avec la commande `.read`
 
