@@ -1,0 +1,148 @@
+# Démo pdo_sqlite, travailler avec une base de données SQLite avec PHP
+
+Une démo et de la documentation pour bien démarrer avec les bases de données SQLite et PHP.
+
+- [Démo pdo\_sqlite, travailler avec une base de données SQLite avec PHP](#démo-pdo_sqlite-travailler-avec-une-base-de-données-sqlite-avec-php)
+  - [Installation](#installation)
+  - [Le client sqlite3](#le-client-sqlite3)
+  - [Démarrer](#démarrer)
+  - [Persister une base de données](#persister-une-base-de-données)
+  - [Gestion des bases de données](#gestion-des-bases-de-données)
+  - [Références](#références)
+    - [SQLite](#sqlite)
+    - [PHP et SQLite](#php-et-sqlite)
+
+
+## Installation
+
+- [Installer SQLite](https://www.sqlite.org/download.html)
+- [Installer l'extension `PDO`](https://www.php.net/manual/fr/pdo.installation.php)
+- Installer l'extension [`php_pdo_sqlite`](https://www.php.net/manual/en/ref.pdo-sqlite.php)
+
+~~~bash
+#Vérifier l'installation et l'activation des extensions PDO et pdo_sqlite
+php -m | grep "pdo_sqlite
+PDO"
+PDO
+pdo_sqlite
+~~~
+
+## Le client sqlite3
+
+sqlite3 est une interface en ligne de commande pour manipuler les bases de données SQLite version 3. Une base de données SQLite est un simple fichier sur le disque ou peut être hébergée directement en mémoire.
+
+~~~bash
+#Le manuel de sqlite3
+man sqlite3
+#Afficher la version installée
+sqlite3 -version
+#Obtenir de l'aide les options de sqlite3
+sqlite3 -help
+#Executer un fichier à l'ouverture de l'interpréteur de commandes
+sqlite3 -init ddl.sql
+~~~
+
+Dans l'interpréteur
+
+~~~bash
+#Afficher l'aide
+sqlite>.help
+#Fermer la connexion et quitter
+sqlite>.exit
+#Afficher les bases de données attachées (aucun à l'ouverture par défaut)
+sqlite>.databases
+#Afficher les tables de la base de données attachée
+sqlite>.tables
+#Montre les valeurs des variables d'environnement (configuration de sqlite3)
+sqlite>.show
+#Ouvrir une base de données persistante (fichier)
+sqlite>.open db.sql3
+~~~
+
+## Démarrer
+
+A l'ouverture, sqlite3 ouvre par défaut [une base de données en mémoire](https://www.sqlite.org/inmemorydb.html) (qui est le nom de fichier réservé `:memory`). La base de données ouverte est toujours nommée `main`. La base de données est *volatile* et toutes les transactions sur cette base seront perdues à la fermeture de la connexion. En effet, une base de données en mémoire est automatiquement détruite quand la connexion qui les a crées est close.
+
+~~~bash
+sqlite3
+sqlite> CREATE TABLE IF NOT EXISTS Foo(id INT PRIMARY KEY); 
+sqlite>.tables
+Foo
+sqlite>.exit
+sqlite3
+#La liste est bien vide
+sqlite>.tables
+~~~
+
+Contrairement à la majorité des SGBDR, SQLite n'utilise pas l'architecture client/serveur. Une connexion à une base de données SQLite est représentée par un pointeur vers une instance d'un objet "sqlite3". Lorsque la connexion est fermée, la mémoire est libérée et les données perdues.
+
+## Persister une base de données
+
+~~~bash
+sqlite3 mydb.sql3
+#A la première requête sqlite3 va créer le fichier mydb.sql3 s'il n'existe pas
+#pour persister la base
+sqlite> CREATE TABLE Foo(id INT);
+sqlite> .databases
+sqlite> main: /path/to/mydb.sql3 r/w
+#On ferme la connexion
+sqlite>.exit
+sqlite3 mydb.sql3
+sqlite> .databases
+#La transaction précédente a bien été enregistrée dans le fichier mydb.sql3
+#qui persiste la base sur le disque
+sqlite> main: /path/to/mydb.sql3 r/w
+sqlite> .tables
+sqlite>Foo
+~~~
+
+On peut voir qu'en passant un fichier en argument de sqlite3, la connexion associe le schéma principal `main` au fichier renseigné. Le fichier devient donc notre base par défaut et les transactions sont enregistrées sur le disque.
+
+## Gestion des bases de données
+
+En SQLite, il n'y a pas d'instruction `CREATE DATABASE`. Une connexion à une base de données SQLite peut contenir plusieurs bases de données. Une base de données est soit contenue dans un fichier, soit en mémoire. Par exemple, lorsque l'on ouvre une connexion sans indiquer de fichier, la base de données `main` pointe sur une base de données maintenue en mémoire.
+
+On peut *attacher* et *détacher* d'autres bases de données en chargeant des fichiers avec l'instruction [`ATTACH DATABASE`](https://www.sqlite.org/lang_attach.html). Pour cela il faut indiquer le fichier à charger (qui contient la base) et le nom du schéma.
+
+Créons une nouvelle base de données `otherdb.sql3`
+
+~~~bash
+sqlite3 otherdb.sql3
+~~~
+
+> Le prompt `sqlite>` n'est plus représenté à présent.
+
+~~~bash
+CREATE TABLE Bar(id INT);
+.databases
+main: /path/to/otherdb.sql3 r/w
+#On attache notre base de données précédente à la connexion sur le schéma 'mydb'
+ATTACH DATABASE 'mydb.sql3' AS mydb;
+#Lister les bases de données. On voit également les droits en lecture et écriture
+.databases
+main: /path/to/otherdb.sql3 r/w
+mydb: /path/to/mydb.sql3 r/w
+.tables
+#La table Bar sur le schéma principal (fichier otherdb.sql3) 
+# et la table Foo sur le schéma 'mydb'  (fichier mydb.sql3)
+Bar       mydb.Foo
+#Où va être créée la table Foo ?
+CREATE TABLE Foo(id INT);
+DETACH mydb;
+~~~
+
+La commande `.databases` montre toutes les bases de données ouvertes dans la connexion. La commande `.schema` affiche le schéma complet de la base de données (i.e l'ensemble des instructions SQL la définissant). La commande `.schema`, comme la commande `.tables`, affiche le schéma de toutes les bases de données attachées. On peut détacher une base avec [DETACH](https://www.sqlite.org/lang_detach.html).
+
+
+## Références
+
+### SQLite
+
+- [SQLite Documentation](https://www.sqlite.org/docs.html)
+- [Command Line Shell For SQLite : Getting Started](https://www.sqlite.org/cli.html#dschema)
+- [Alphabetical List Of Documents SQLite](https://www.sqlite.org/doclist.html), articles de la doc officielle sur sqlite3 et sur ses instructions
+
+### PHP et SQLite
+
+- [Fonctions SQLite (PDO_SQLITE)](https://www.php.net/manual/fr/ref.pdo-sqlite.php)
+- [PHP PDO](https://www.php.net/manual/fr/book.pdo.php)# demo-pdo-sqlite
